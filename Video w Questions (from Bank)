@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Quiz Player</title>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .controls {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .controls button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 20px;
+            cursor: pointer;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid #333;
+            background: white;
+            transition: all 0.2s ease;
+        }
+        
+        .controls button:hover {
+            background: #f0f0f0;
+        }
+        
+        .quiz-container {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .quiz-container.active {
+            display: block;
+        }
+        
+        .option {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: left;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: none;
+            cursor: pointer;
+        }
+        
+        .option:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .option.correct {
+            background-color: #90EE90;
+        }
+        
+        .option.incorrect {
+            background-color: #FFB6C1;
+        }
+        
+        .timer {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .score-display {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .streak-counter {
+            color: #FF8C00;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .name-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .name-modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .name-modal input {
+            width: 100%;
+            padding: 10px;
+            margin: 20px 0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .name-modal button {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .name-modal button:hover {
+            background: #45a049;
+        }
+
+        .score-details-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .score-details-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .close-button {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .close-button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Name Modal -->
+        <div id="nameModal" class="name-modal">
+            <div class="name-modal-content">
+                <h2>Welcome to the Quiz!</h2>
+                <p>Please enter your name to begin:</p>
+                <input type="text" id="learnerName" placeholder="Your name">
+                <button onclick="startQuiz()">Start</button>
+            </div>
+        </div>
+
+        <!-- Score Details Modal -->
+        <div id="scoreDetailsModal" class="score-details-modal" style="display: none;">
+            <div class="score-details-content">
+                <h2>Score Details</h2>
+                <div id="scoreDetails">
+                    <p><strong>Learner:</strong> <span id="modalLearnerName"></span></p>
+                    <p><strong>Video:</strong> <span id="modalVideoTitle">Loading...</span></p>
+                    <p><strong>Current Score:</strong> <span id="modalScore"></span></p>
+                    <p><strong>Current Streak:</strong> <span id="modalStreak"></span></p>
+                </div>
+                <button class="close-button" onclick="closeScoreModal()">Close</button>
+            </div>
+        </div>
+
+        <!-- Score Display -->
+        <div class="score-display" onclick="showScoreDetails()">
+            <div id="scoreText">Score: 0/0 points</div>
+            <div id="streakText" class="streak-counter"></div>
+        </div>
+
+        <div class="video-container">
+            <div id="youtube-player"></div>
+        </div>
+        <div class="controls">
+            <button id="toggleButton">▶</button>
+        </div>
+        <div id="quizContainer" class="quiz-container">
+            <h3 id="question"></h3>
+            <div id="options"></div>
+        </div>
+        <div class="timer">
+            Current time: <span id="currentTime">0</span> seconds
+        </div>
+    </div>
+
+    <script>
+        // ==============================
+        // CONFIGURATION SECTION
+        // ==============================
+        
+        // Change this to your desired YouTube video ID
+        // From https://www.youtube.com/watch?v=3uSi3OzVB6M
+        const VIDEO_ID = '3uSi3OzVB6M'; 
+        
+        // Question banks - each timestamp pulls randomly from its bank
+        const QUESTION_BANKS = {
+            15: [ // Questions for 15 seconds into video
+                {
+                    question: "What is the main subject of this video?",
+                    options: ["Science", "History", "Mathematics", "Literature"],
+                    feedback: [
+                        "Great choice, {learner name}! This appears to be science-focused.",
+                        "Not quite, {learner name}. This seems more science-oriented.",
+                        "Close, {learner name}, but this looks more like a science topic.",
+                        "Good guess, {learner name}, but this appears to be about science."
+                    ],
+                    correctAnswer: 0
+                },
+                {
+                    question: "What type of educational content is this?",
+                    options: ["Documentary", "Lecture", "Tutorial", "Interview"],
+                    feedback: [
+                        "Excellent, {learner name}! This has documentary characteristics.",
+                        "Good observation, {learner name}! This does seem like a lecture format.",
+                        "Nice thinking, {learner name}! This could be considered tutorial content.",
+                        "Interesting perspective, {learner name}! Interview style is possible."
+                    ],
+                    correctAnswer: 0
+                },
+                {
+                    question: "What can you observe about the presentation style?",
+                    options: ["Animated", "Live action", "Mixed media", "Text-based"],
+                    feedback: [
+                        "Good eye, {learner name}! Animation is used in this presentation.",
+                        "Correct, {learner name}! There are live action elements visible.",
+                        "Excellent observation, {learner name}! This uses mixed media approaches.",
+                        "Interesting, {learner name}, but there seems to be more visual content than just text."
+                    ],
+                    correctAnswer: 2
+                },
+                {
+                    question: "What is the approximate length category of this video?",
+                    options: ["Short (under 5 min)", "Medium (5-15 min)", "Long (15-30 min)", "Extended (30+ min)"],
+                    feedback: [
+                        "Good estimate, {learner name}! Short videos are great for focused learning.",
+                        "Nice guess, {learner name}! Medium-length videos allow for good depth.",
+                        "Thoughtful, {learner name}! Longer videos can cover topics thoroughly.",
+                        "Interesting perspective, {learner name}! Extended videos allow for comprehensive coverage."
+                    ],
+                    correctAnswer: 1
+                },
+                {
+                    question: "What kind of audio quality do you notice?",
+                    options: ["Professional narration", "Casual speaking", "Music-focused", "Silent/minimal audio"],
+                    feedback: [
+                        "Great observation, {learner name}! Professional narration enhances learning.",
+                        "Good pick-up, {learner name}! Casual speaking can be very engaging.",
+                        "Interesting note, {learner name}! Music can be an important element.",
+                        "Observant, {learner name}! Some educational content relies more on visuals."
+                    ],
+                    correctAnswer: 0
+                }
+            ],
+            
+            45: [ // Questions for 45 seconds into video
+                {
+                    question: "What visual elements do you notice at this point?",
+                    options: ["Diagrams", "Real footage", "Text overlays", "Graphics"],
+                    feedback: [
+                        "Excellent, {learner name}! Diagrams are great for explaining concepts.",
+                        "Good eye, {learner name}! Real footage adds authenticity to content.",
+                        "Nice observation, {learner name}! Text overlays help clarify information.",
+                        "Great spotting, {learner name}! Graphics enhance visual learning."
+                    ],
+                    correctAnswer: 0
+                },
+                {
+                    question: "How would you describe the pacing at this point?",
+                    options: ["Very fast", "Moderate", "Slow and detailed", "Variable"],
+                    feedback: [
+                        "Interesting, {learner name}! Fast pacing can be energizing.",
+                        "Good assessment, {learner name}! Moderate pacing works well for learning.",
+                        "Thoughtful, {learner name}! Detailed pacing helps with understanding.",
+                        "Observant, {learner name}! Variable pacing keeps things interesting."
+                    ],
+                    correctAnswer: 1
+                },
+                {
+                    question: "What type of information is being presented?",
+                    options: ["Factual data", "Opinions", "Instructions", "Stories"],
+                    feedback: [
+                        "Excellent, {learner name}! Factual data forms the foundation of learning.",
+                        "Interesting perspective, {learner name}! Opinions can provide different viewpoints.",
+                        "Good thinking, {learner name}! Instructions help with practical application.",
+                        "Creative thinking, {learner name}! Stories make content memorable."
+                    ],
+                    correctAnswer: 0
+                },
+                {
+                    question: "What is the apparent target audience?",
+                    options: ["General public", "Students", "Professionals", "Children"],
+                    feedback: [
+                        "Good assessment, {learner name}! General audience content is broadly accessible.",
+                        "Excellent observation, {learner name}! Student-focused content has specific characteristics.",
+                        "Thoughtful analysis, {learner name}! Professional content tends to be more specialized.",
+                        "Interesting perspective, {learner name}! Child-focused content has unique presentation styles."
+                    ],
+                    correctAnswer: 1
+                },
+                {
+                    question: "How clear is the presentation at this point?",
+                    options: ["Very clear", "Somewhat clear", "Confusing", "Building complexity"],
+                    feedback: [
+                        "Great, {learner name}! Clear presentation helps with comprehension.",
+                        "Good observation, {learner name}! Somewhat clear content often improves as it progresses.",
+                        "Honest assessment, {learner name}! Sometimes complex topics start confusingly.",
+                        "Insightful, {learner name}! Building complexity is a good teaching strategy."
+                    ],
+                    correctAnswer: 0
+                }
+            ],
+            
+            75: [ // Questions for 75 seconds into video
+                {
+                    question: "What concepts have been introduced so far?",
+                    options: ["Basic principles", "Advanced theories", "Practical applications", "Historical context"],
+                    feedback: [
+                        "Excellent, {learner name}! Basic principles provide a strong foundation.",
+                        "Interesting, {learner name}! Advanced theories can be challenging but rewarding.",
+                        "Great thinking, {learner name}! Practical applications make learning relevant.",
+                        "Good observation, {learner name}! Historical context adds depth to understanding."
+                    ],
+                    correctAnswer: 0
+                },
+                {
+                    question: "How is information being reinforced?",
+                    options: ["Repetition", "Examples", "Visual aids", "All of the above"],
+                    feedback: [
+                        "Good point, {learner name}! Repetition helps with retention.",
+                        "Excellent, {learner name}! Examples make abstract concepts concrete.",
+                        "Great observation, {learner name}! Visual aids enhance understanding.",
+                        "Perfect, {learner name}! Multiple reinforcement methods work best together."
+                    ],
+                    correctAnswer: 3
+                },
+                {
+                    question: "What is the current focus of the content?",
+                    options: ["Introduction", "Main concept", "Details", "Summary"],
+                    feedback: [
+                        "Good timing, {learner name}! Introductions set up the learning journey.",
+                        "Excellent, {learner name}! Main concepts are the heart of educational content.",
+                        "Great attention, {learner name}! Details provide important depth.",
+                        "Thoughtful, {learner name}! Summaries help consolidate learning."
+                    ],
+                    correctAnswer: 1
+                },
+                {
+                    question: "How engaging is the content at this point?",
+                    options: ["Very engaging", "Moderately engaging", "Somewhat dry", "Improving"],
+                    feedback: [
+                        "Wonderful, {learner name}! Engaging content makes learning enjoyable.",
+                        "Good assessment, {learner name}! Moderate engagement is still effective.",
+                        "Honest evaluation, {learner name}! Sometimes important content can seem dry.",
+                        "Optimistic view, {learner name}! Content often gets more engaging as it develops."
+                    ],
+                    correctAnswer: 0
+                },
+                {
+                    question: "What learning style does this content support best?",
+                    options: ["Visual learners", "Auditory learners", "Kinesthetic learners", "Multiple styles"],
+                    feedback: [
+                        "Great insight, {learner name}! Visual learners benefit from diagrams and graphics.",
+                        "Good observation, {learner name}! Auditory learners benefit from narration and sound.",
+                        "Interesting perspective, {learner name}! Some content can engage hands-on learners.",
+                        "Excellent, {learner name}! The best educational content supports multiple learning styles."
+                    ],
+                    correctAnswer: 3
+                }
+            ]
+        };
+
+        // This will be populated with randomly selected questions
+        let QUIZ_POINTS = [];
+
+        // ==============================
+        // END CONFIGURATION SECTION
+        // ==============================
+
+        // Function to randomly select questions from banks
+        function initializeQuizPoints() {
+            QUIZ_POINTS = [];
+            
+            // For each timestamp, randomly select one question from its bank
+            Object.keys(QUESTION_BANKS).forEach(timestamp => {
+                const bank = QUESTION_BANKS[timestamp];
+                const randomIndex = Math.floor(Math.random() * bank.length);
+                const selectedQuestion = { ...bank[randomIndex] }; // Create a copy
+                selectedQuestion.timeStamp = parseInt(timestamp);
+                QUIZ_POINTS.push(selectedQuestion);
+            });
+            
+            // Sort by timestamp to ensure proper order
+            QUIZ_POINTS.sort((a, b) => a.timeStamp - b.timeStamp);
+            
+            // Update total questions count
+            totalQuestions = QUIZ_POINTS.length;
+            
+            console.log('Random questions selected:', QUIZ_POINTS);
+        }
+
+        // Global variables
+        let player;
+        let currentQuiz = null;
+        let completedQuizzes = new Set();
+        let nextQuizPoint = null;
+        let learnerName = '';
+        let currentScore = 0;
+        let totalQuestions = QUIZ_POINTS.length;
+        let currentStreak = 0;
+        let attemptsForCurrentQuestion = 0;
+        let videoTitle = '';
+
+        // Score modal functions
+        function showScoreDetails() {
+            const modal = document.getElementById('scoreDetailsModal');
+            document.getElementById('modalLearnerName').textContent = learnerName;
+            document.getElementById('modalScore').textContent = `${currentScore}/${totalQuestions} points`;
+            document.getElementById('modalStreak').textContent = currentStreak > 1 ? `${currentStreak} correct in a row! 🔥` : 'No current streak';
+            
+            // Get video title if we haven't already
+            if (!videoTitle && player && player.getVideoData) {
+                videoTitle = player.getVideoData().title;
+            }
+            document.getElementById('modalVideoTitle').textContent = videoTitle || 'Interactive Quiz Video';
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeScoreModal() {
+            document.getElementById('scoreDetailsModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('scoreDetailsModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+        // Initialize functions
+        function startQuiz() {
+            const nameInput = document.getElementById('learnerName');
+            learnerName = nameInput.value.trim();
+            
+            if (learnerName) {
+                // Initialize random questions when quiz starts
+                initializeQuizPoints();
+                
+                document.getElementById('nameModal').style.display = 'none';
+                updateScoreDisplay();
+                loadYouTubeAPI();
+            } else {
+                alert('Please enter your name to begin!');
+            }
+        }
+
+        function updateScoreDisplay() {
+            // Update the score display in the corner
+            const scoreText = document.getElementById('scoreText');
+            const streakText = document.getElementById('streakText');
+            
+            scoreText.textContent = `${learnerName}'s score: ${currentScore}/${totalQuestions} points`;
+            
+            if (currentStreak > 1) {
+                streakText.textContent = `${currentStreak} correct in a row! 🔥`;
+            } else {
+                streakText.textContent = '';
+            }
+
+            // Update the modal if it's visible
+            const modal = document.getElementById('scoreDetailsModal');
+            if (modal.style.display === 'flex') {
+                document.getElementById('modalLearnerName').textContent = learnerName;
+                document.getElementById('modalScore').textContent = `${currentScore}/${totalQuestions} points`;
+                document.getElementById('modalStreak').textContent = currentStreak > 1 
+                    ? `${currentStreak} correct in a row! 🔥` 
+                    : 'No current streak';
+                
+                // Update video title if we have it
+                if (!videoTitle && player && player.getVideoData) {
+                    videoTitle = player.getVideoData().title;
+                    document.getElementById('modalVideoTitle').textContent = videoTitle || 'Interactive Quiz Video';
+                }
+            }
+        }
+
+        function replaceNameInFeedback(feedback) {
+            return feedback.replace('{learner name}', learnerName);
+        }
+
+        // Load YouTube IFrame API
+        function loadYouTubeAPI() {
+            const tag = document.createElement('script');
+            tag.src = 'https://www.youtube.com/iframe_api';
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        }
+
+        // Initialize YouTube player when API is ready
+        window.onYouTubeIframeAPIReady = function() {
+            console.log("YouTube API is ready");
+            player = new YT.Player('youtube-player', {
+                height: '360',
+                width: '640',
+                videoId: VIDEO_ID,
+                events: {
+                    'onStateChange': onPlayerStateChange,
+                    'onReady': onPlayerReady
+                },
+                playerVars: {
+                    'controls': 0,
+                    'disablekb': 1
+                }
+            });
+        };
+
+        // When player is ready
+        function onPlayerReady(event) {
+            setInterval(() => {
+                if (player && player.getPlayerState() === YT.PlayerState.PLAYING) {
+                    document.getElementById('currentTime').textContent = 
+                        Math.floor(player.getCurrentTime());
+                }
+            }, 1000);
+        }
+
+        // Handle player state changes
+        function onPlayerStateChange(event) {
+            const toggleButton = document.getElementById('toggleButton');
+            
+            if (event.data === YT.PlayerState.PLAYING) {
+                toggleButton.textContent = '⏸';
+                updateNextQuizPoint();
+                startQuizCheck();
+            } else {
+                toggleButton.textContent = '▶';
+            }
+        }
+
+        // Find next quiz point
+        function updateNextQuizPoint() {
+            if (!player || !player.getCurrentTime) return;
+            const currentTime = player.getCurrentTime();
+            nextQuizPoint = QUIZ_POINTS
+                .filter(point => !completedQuizzes.has(point.timeStamp))
+                .find(point => point.timeStamp > currentTime);
+        }
+
+        // Check for quiz point
+        function startQuizCheck() {
+            if (!nextQuizPoint || currentQuiz) return;
+            
+            const checkQuiz = () => {
+                if (!player || player.getPlayerState() !== YT.PlayerState.PLAYING) return;
+                
+                const currentTime = player.getCurrentTime();
+                if (currentTime >= nextQuizPoint.timeStamp) {
+                    player.pauseVideo();
+                    attemptsForCurrentQuestion = 1;  // Reset attempts counter for new question
+                    showQuiz(nextQuizPoint);
+                } else if (currentTime < nextQuizPoint.timeStamp) {
+                    requestAnimationFrame(checkQuiz);
+                }
+            };
+            
+            requestAnimationFrame(checkQuiz);
+        }
+
+        // Display quiz
+        function showQuiz(quiz) {
+            currentQuiz = quiz;
+            const quizContainer = document.getElementById('quizContainer');
+            const questionEl = document.getElementById('question');
+            const optionsEl = document.getElementById('options');
+            
+            questionEl.textContent = quiz.question;
+            optionsEl.innerHTML = '';
+            
+            quiz.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option';
+                button.textContent = option;
+                button.onclick = () => handleAnswer(index);
+                optionsEl.appendChild(button);
+            });
+            
+            quizContainer.classList.add('active');
+        }
+
+        // Handle answer selection
+        function handleAnswer(selectedIndex) {
+            const options = document.getElementsByClassName('option');
+            const correct = selectedIndex === currentQuiz.correctAnswer;
+            
+            // Add the appropriate class for coloring
+            options[selectedIndex].classList.add(correct ? 'correct' : 'incorrect');
+            
+            if (correct) {
+                Array.from(options).forEach(option => {
+                    option.disabled = true;
+                });
+                completedQuizzes.add(currentQuiz.timeStamp);
+                
+                // Update score based on attempts
+                if (attemptsForCurrentQuestion === 1) {
+                    currentScore += 1;
+                    currentStreak += 1;
+                } else if (attemptsForCurrentQuestion === 2) {
+                    currentScore += 0.5;
+                    currentStreak = 0;
+                } else {
+                    currentStreak = 0;
+                }
+                
+                updateScoreDisplay();
+                
+                const feedbackMsg = document.createElement('p');
+                feedbackMsg.textContent = replaceNameInFeedback(currentQuiz.feedback[selectedIndex]);
+                feedbackMsg.style.color = '#008000';
+                feedbackMsg.style.marginTop = '10px';
+                feedbackMsg.style.textAlign = 'center';
+                feedbackMsg.style.fontWeight = 'bold';
+                
+                const existingMsg = options[selectedIndex].parentNode.querySelector('p');
+                if (existingMsg) {
+                    existingMsg.remove();
+                }
+                options[selectedIndex].parentNode.appendChild(feedbackMsg);
+                
+                setTimeout(() => {
+                    document.getElementById('quizContainer').classList.remove('active');
+                    currentQuiz = null;
+                    attemptsForCurrentQuestion = 0;
+                    player.playVideo();
+                }, 2000);
+            } else {
+                attemptsForCurrentQuestion++;
+                currentStreak = 0;
+                updateScoreDisplay();
+                
+                const feedbackMsg = document.createElement('p');
+                feedbackMsg.textContent = replaceNameInFeedback(currentQuiz.feedback[selectedIndex]);
+                feedbackMsg.style.color = '#FF0000';
+                feedbackMsg.style.marginTop = '10px';
+                feedbackMsg.style.textAlign = 'center';
+                
+                const existingMsg = options[selectedIndex].parentNode.querySelector('p');
+                if (existingMsg) {
+                    existingMsg.remove();
+                }
+                options[selectedIndex].parentNode.appendChild(feedbackMsg);
+            }
+        }
+
+        // Initialize toggle button
+        document.getElementById('toggleButton').onclick = () => {
+            if (!player) return;
+            
+            const playerState = player.getPlayerState();
+            if (playerState === YT.PlayerState.PLAYING) {
+                player.pauseVideo();
+                toggleButton.textContent = '▶';
+            } else if (!currentQuiz) {
+                player.playVideo();
+                toggleButton.textContent = '⏸';
+            }
+        };
+
+        // Handle enter key in name input
+        document.getElementById('learnerName').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                startQuiz();
+            }
+        });
+    </script>
+</body>
+</html>
