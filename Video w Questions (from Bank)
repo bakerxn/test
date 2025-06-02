@@ -84,6 +84,82 @@
         .option.incorrect {
             background-color: #FFB6C1;
         }
+
+        /* Likert Scale Styles */
+        .likert-container {
+            margin: 20px 0;
+        }
+
+        .likert-scale {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+            padding: 0 10px;
+        }
+
+        .likert-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background-color 0.2s ease;
+            min-width: 80px;
+        }
+
+        .likert-option:hover {
+            background-color: #f0f0f0;
+        }
+
+        .likert-option.selected {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .likert-radio {
+            width: 20px;
+            height: 20px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .likert-label {
+            font-size: 12px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .likert-endpoints {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #666;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .likert-submit {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 24px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .likert-submit:hover {
+            background-color: #45a049;
+        }
+
+        .likert-submit:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
         
         .timer {
             text-align: center;
@@ -249,43 +325,43 @@
         
         // Question banks - each timestamp pulls randomly from its bank
         const QUESTION_BANKS = {
-            15: [ // Questions for 15 seconds into video
+            53: [ // Questions for 53 seconds into video
                 {
-                    question: "What is the main subject of this video?",
-                    options: ["Science", "History", "Mathematics", "Literature"],
+                    question: "Alex wants to know the release year of the movie Inception. He quickly types "Inception release year" into a search engine and notes the answer. Question: Which information-seeking behavior is Alex demonstrating?",
+                    options: ["Simple Search", "Browsing", "Fact-Checking", "Conducting Research"],
                     feedback: [
                         "Great choice, {learner name}! This appears to be science-focused.",
                         "Not quite, {learner name}. This seems more science-oriented.",
                         "Close, {learner name}, but this looks more like a science topic.",
                         "Good guess, {learner name}, but this appears to be about science."
                     ],
-                    correctAnswer: 0
+                    correctAnswer: 1
                 },
                 {
-                    question: "What type of educational content is this?",
-                    options: ["Documentary", "Lecture", "Tutorial", "Interview"],
+                    question: "Carlos needs to find out the capital of Australia for a quiz. He quickly searches "capital of Australia" online and finds the answer. Question: Which information-seeking behavior is Carlos demonstrating?",
+                    options: ["Simple Search", "Browsing", "Fact-Checking", "Conducting Research"],
                     feedback: [
                         "Excellent, {learner name}! This has documentary characteristics.",
                         "Good observation, {learner name}! This does seem like a lecture format.",
                         "Nice thinking, {learner name}! This could be considered tutorial content.",
                         "Interesting perspective, {learner name}! Interview style is possible."
                     ],
-                    correctAnswer: 0
+                    correctAnswer: 1
                 },
                 {
-                    question: "What can you observe about the presentation style?",
-                    options: ["Animated", "Live action", "Mixed media", "Text-based"],
+                    question: Jake is watching a basketball game and wants to know how many points LeBron James scored in the 2020 NBA Finals. He quickly types "LeBron James 2020 NBA Finals points" into a search engine and notes the answer. Question: Which information-seeking behavior is Jake demonstrating?,
+                    options: ["Simple Search", "Browsing", "Fact-Checking", "Conducting Research"],
                     feedback: [
                         "Good eye, {learner name}! Animation is used in this presentation.",
                         "Correct, {learner name}! There are live action elements visible.",
                         "Excellent observation, {learner name}! This uses mixed media approaches.",
                         "Interesting, {learner name}, but there seems to be more visual content than just text."
                     ],
-                    correctAnswer: 2
+                    correctAnswer: 1
                 },
                 {
-                    question: "What is the approximate length category of this video?",
-                    options: ["Short (under 5 min)", "Medium (5-15 min)", "Long (15-30 min)", "Extended (30+ min)"],
+                    question: "Ava is completing a reading for class and comes across the word “prophylaxis.” She doesn’t know what this word means and types it into a search engine to learn its definition. Question: Which information-seeking behavior is Ava demonstrating?",
+                    options: ["Simple Search", "Browsing", "Fact-Checking", "Conducting Research"],
                     feedback: [
                         "Good estimate, {learner name}! Short videos are great for focused learning.",
                         "Nice guess, {learner name}! Medium-length videos allow for good depth.",
@@ -294,92 +370,103 @@
                     ],
                     correctAnswer: 1
                 },
-                {
-                    question: "What kind of audio quality do you notice?",
-                    options: ["Professional narration", "Casual speaking", "Music-focused", "Silent/minimal audio"],
-                    feedback: [
-                        "Great observation, {learner name}! Professional narration enhances learning.",
-                        "Good pick-up, {learner name}! Casual speaking can be very engaging.",
-                        "Interesting note, {learner name}! Music can be an important element.",
-                        "Observant, {learner name}! Some educational content relies more on visuals."
-                    ],
-                    correctAnswer: 0
-                }
+
             ],
             
-            45: [ // Questions for 45 seconds into video
+            80: [ // Questions for 80 seconds into video
                 {
-                    question: "What visual elements do you notice at this point?",
-                    options: ["Diagrams", "Real footage", "Text overlays", "Graphics"],
+                    question: "Situation: Maria is interested in learning about renewable energy but hasn't chosen a specific topic. She spends time reading various articles and watching videos on different renewable energy sources.
+
+Question: Which information-seeking behavior is Maria demonstrating?
+",
+                    options: ["Simple Search", "Browsing", "Fact-Checking", "Conducting Research"],
                     feedback: [
                         "Excellent, {learner name}! Diagrams are great for explaining concepts.",
                         "Good eye, {learner name}! Real footage adds authenticity to content.",
                         "Nice observation, {learner name}! Text overlays help clarify information.",
                         "Great spotting, {learner name}! Graphics enhance visual learning."
                     ],
-                    correctAnswer: 0
+                    correctAnswer: 2
                 },
                 {
-                    question: "How would you describe the pacing at this point?",
-                    options: ["Very fast", "Moderate", "Slow and detailed", "Variable"],
+                    question: "Emily wants to learn more about astronomy but doesn't have a specific focus. She looks through books and reads articles on the subject to explore its different facets.
+
+Question: Which information-seeking behavior is Emily demonstrating?
+",
+                    options: ["Simple Search", "Browsing", "Fact-Checking", "Conducting Research"],
                     feedback: [
                         "Interesting, {learner name}! Fast pacing can be energizing.",
                         "Good assessment, {learner name}! Moderate pacing works well for learning.",
                         "Thoughtful, {learner name}! Detailed pacing helps with understanding.",
                         "Observant, {learner name}! Variable pacing keeps things interesting."
                     ],
-                    correctAnswer: 1
+                    correctAnswer: 2
                 },
                 {
-                    question: "What type of information is being presented?",
-                    options: ["Factual data", "Opinions", "Instructions", "Stories"],
+                    question: "Sophia is curious about different cooking techniques. She flips through various cookbooks and watches cooking shows without a specific dish in mind.
+
+Question: Which information-seeking behavior is Sophia demonstrating?
+",
+                    options: ["Simple Search", "Browsing", "Fact-Checking", "Conducting Research"],
                     feedback: [
                         "Excellent, {learner name}! Factual data forms the foundation of learning.",
                         "Interesting perspective, {learner name}! Opinions can provide different viewpoints.",
                         "Good thinking, {learner name}! Instructions help with practical application.",
                         "Creative thinking, {learner name}! Stories make content memorable."
                     ],
-                    correctAnswer: 0
+                    correctAnswer: 2
                 },
                 {
-                    question: "What is the apparent target audience?",
-                    options: ["General public", "Students", "Professionals", "Children"],
+                    question: "Emma is interested in learning about different art movements but hasn't chosen a specific focus. She spends time exploring various art history books and online galleries to see what captures her interest.
+
+Question: Which information-seeking behavior is Emma demonstrating?
+",
+                    options: ["Simple Search", "Browsing", "Fact-Checking", "Conducting Research"],
                     feedback: [
                         "Good assessment, {learner name}! General audience content is broadly accessible.",
                         "Excellent observation, {learner name}! Student-focused content has specific characteristics.",
                         "Thoughtful analysis, {learner name}! Professional content tends to be more specialized.",
                         "Interesting perspective, {learner name}! Child-focused content has unique presentation styles."
                     ],
-                    correctAnswer: 1
+                    correctAnswer: 2
                 },
                 {
-                    question: "How clear is the presentation at this point?",
-                    options: ["Very clear", "Somewhat clear", "Confusing", "Building complexity"],
+                    question: "Nina is interested in World War I but doesn't have a specific focus in mind. She reads an encyclopedia entry on the war and looks through books and articles on the topic to discover what aspects of the war stand out to her.
+
+Question: Which information-seeking behavior is Nina demonstrating?
+",
+                    options: ["Simple Search", "Browsing", "Fact-Checking", "Conducting Research"],
                     feedback: [
                         "Great, {learner name}! Clear presentation helps with comprehension.",
                         "Good observation, {learner name}! Somewhat clear content often improves as it progresses.",
                         "Honest assessment, {learner name}! Sometimes complex topics start confusingly.",
                         "Insightful, {learner name}! Building complexity is a good teaching strategy."
                     ],
-                    correctAnswer: 0
+                    correctAnswer: 2
                 }
             ],
             
-            75: [ // Questions for 75 seconds into video
+            103: [ // Questions for 103 seconds into video
                 {
-                    question: "What concepts have been introduced so far?",
-                    options: ["Basic principles", "Advanced theories", "Practical applications", "Historical context"],
+                    question: "Situation: Jamal reads an article claiming that a specific diet cures diabetes. Skeptical, he searches for scientific studies and expert opinions to verify this claim.
+
+Question: Which information-seeking behavior is Jamal demonstrating?
+",
+                    options: ["Simple Search", "Browsing", "Fact-Checking", "Conducting Research"],
                     feedback: [
                         "Excellent, {learner name}! Basic principles provide a strong foundation.",
                         "Interesting, {learner name}! Advanced theories can be challenging but rewarding.",
                         "Great thinking, {learner name}! Practical applications make learning relevant.",
                         "Good observation, {learner name}! Historical context adds depth to understanding."
                     ],
-                    correctAnswer: 0
+                    correctAnswer: 3
                 },
                 {
-                    question: "How is information being reinforced?",
-                    options: ["Repetition", "Examples", "Visual aids", "All of the above"],
+                    question: "Situation: Tom hears a statistic on a podcast stating that 70% of adults read books regularly. He wants to confirm this, so he looks up recent surveys and studies on adult reading habits.
+
+Question: Which information-seeking behavior is Tom demonstrating?
+",
+                    options: ["Simple Search", "Browsing", "Fact-Checking", "Conducting Research"],
                     feedback: [
                         "Good point, {learner name}! Repetition helps with retention.",
                         "Excellent, {learner name}! Examples make abstract concepts concrete.",
@@ -389,30 +476,39 @@
                     correctAnswer: 3
                 },
                 {
-                    question: "What is the current focus of the content?",
-                    options: ["Introduction", "Main concept", "Details", "Summary"],
+                    question: "Situation: Ben reads a news article stating that a new law has been passed in his state. To confirm, he visits the official state government website and looks for official announcements.
+
+Question: Which information-seeking behavior is Ben demonstrating?
+",
+                    options: ["Simple Search", "Browsing", "Fact-Checking", "Conducting Research"],
                     feedback: [
                         "Good timing, {learner name}! Introductions set up the learning journey.",
                         "Excellent, {learner name}! Main concepts are the heart of educational content.",
                         "Great attention, {learner name}! Details provide important depth.",
                         "Thoughtful, {learner name}! Summaries help consolidate learning."
                     ],
-                    correctAnswer: 1
+                    correctAnswer: 3
                 },
                 {
-                    question: "How engaging is the content at this point?",
-                    options: ["Very engaging", "Moderately engaging", "Somewhat dry", "Improving"],
+                    question: "Situation: Liam hears that a specific vitamin can boost memory. To verify this claim, he searches for scientific studies and expert opinions to confirm its accuracy.
+
+Question: Which information-seeking behavior is Liam demonstrating?
+",
+                    options: ["Simple Search", "Browsing", "Fact-Checking", "Conducting Research"],
                     feedback: [
                         "Wonderful, {learner name}! Engaging content makes learning enjoyable.",
                         "Good assessment, {learner name}! Moderate engagement is still effective.",
                         "Honest evaluation, {learner name}! Sometimes important content can seem dry.",
                         "Optimistic view, {learner name}! Content often gets more engaging as it develops."
                     ],
-                    correctAnswer: 0
+                    correctAnswer: 3
                 },
                 {
-                    question: "What learning style does this content support best?",
-                    options: ["Visual learners", "Auditory learners", "Kinesthetic learners", "Multiple styles"],
+                    question: "Ethan reads a social media post claiming that a certain economic policy typically lowers the unemployment rate. Skeptical, he reads articles written by expert economists to learn whether this claim is true or false.
+
+Question: Which information-seeking behavior is Ethan demonstrating?
+",
+                    options: ["Simple Search", "Browsing", "Fact-Checking", "Conducting Research"],
                     feedback: [
                         "Great insight, {learner name}! Visual learners benefit from diagrams and graphics.",
                         "Good observation, {learner name}! Auditory learners benefit from narration and sound.",
@@ -421,7 +517,393 @@
                     ],
                     correctAnswer: 3
                 }
+            ],
+
+            175: [ // Questions for 175 seconds into video
+                {
+                    question: "Situation: Lena is writing a paper on the effects of climate change on agriculture. She formulates a research question, identifies keywords, searches academic databases, and reviews multiple scholarly articles to weigh the evidence and answer her research question.
+
+Question: Which information-seeking behavior is Lena demonstrating?
+",
+                    options: ["Simple Search", "Browsing", "Fact-Checking", "Conducting Research"],
+                    feedback: [
+                        "Excellent, {learner name}! Basic principles provide a strong foundation.",
+                        "Interesting, {learner name}! Advanced theories can be challenging but rewarding.",
+                        "Great thinking, {learner name}! Practical applications make learning relevant.",
+                        "Good observation, {learner name}! Historical context adds depth to understanding."
+                    ],
+                    correctAnswer: 4
+                },
+                {
+                    question: "Sophie is writing a paper on strategies small businesses use to respond to inflation. She develops a research plan, identifies key terms, and systematically reviews academic journals, books, and credible online sources.
+
+Question: Which information-seeking behavior is Sophie demonstrating?
+
+",
+                    options: ["Simple Search", "Browsing", "Fact-Checking", "Conducting Research"],
+                    feedback: [
+                        "Good point, {learner name}! Repetition helps with retention.",
+                        "Excellent, {learner name}! Examples make abstract concepts concrete.",
+                        "Great observation, {learner name}! Visual aids enhance understanding.",
+                        "Perfect, {learner name}! Multiple reinforcement methods work best together."
+                    ],
+                    correctAnswer: 4
+                },
+                {
+                    question: "Olivia is writing a paper on the impact of tourism on the economies of developing countries. She formulates a research question, identifies keywords, searches academic databases, and reviews multiple scholarly articles to weigh the evidence and answer her research question.
+
+Question: Which information-seeking behavior is Olivia demonstrating?
+
+",
+                    options: ["Simple Search", "Browsing", "Fact-Checking", "Conducting Research"],
+                    feedback: [
+                        "Good timing, {learner name}! Introductions set up the learning journey.",
+                        "Excellent, {learner name}! Main concepts are the heart of educational content.",
+                        "Great attention, {learner name}! Details provide important depth.",
+                        "Thoughtful, {learner name}! Summaries help consolidate learning."
+                    ],
+                    correctAnswer: 4
+                },
+                {
+                    question: "Maya is enrolled in a sociology course and is tasked with exploring the impact of social media on adolescent self-esteem. She formulates a specific research question: "How does daily usage of Instagram influence the self-esteem levels of teenagers aged 13-18?" Maya develops a research plan that includes identifying relevant keywords, searching academic databases for peer-reviewed articles, analyzing various studies, and comparing different scholarly perspectives. She synthesizes the information gathered to answer her research question and presents her findings in a comprehensive research paper
+
+Question: Which information-seeking behavior is Maya demonstrating?
+
+",
+                    options: ["Simple Search", "Browsing", "Fact-Checking", "Conducting Research"],
+                    feedback: [
+                        "Wonderful, {learner name}! Engaging content makes learning enjoyable.",
+                        "Good assessment, {learner name}! Moderate engagement is still effective.",
+                        "Honest evaluation, {learner name}! Sometimes important content can seem dry.",
+                        "Optimistic view, {learner name}! Content often gets more engaging as it develops."
+                    ],
+                    correctAnswer: 4
+                }
             ]
+
+         207: [ // Questions for 207 seconds into video
+                {
+                    question: "Which of the following best describes how research differs from other types of information-seeking behaviors?
+",
+                    options: ["Research is only about verifying facts.", "Research is quick and usually involves finding a single piece of information.", "Research is exploring a complex question using a strategic approach and a range of diverse sources.", 
+"Research focuses only on one scholar’s opinion on a topic."],
+                    feedback: [
+                        "Excellent, {learner name}! Basic principles provide a strong foundation.",
+                        "Interesting, {learner name}! Advanced theories can be challenging but rewarding.",
+                        "Great thinking, {learner name}! Practical applications make learning relevant.",
+                        "Good observation, {learner name}! Historical context adds depth to understanding."
+                    ],
+                    correctAnswer: 0
+                },
+                {
+                    question: "Which of the following are important traits of a good researcher?",
+                    options: ["Curiosity about what’s out there on the topic", "Flexibility and creativity in trying different search strategies", "Persistence when research gets difficult", "All of the above"],
+                    feedback: [
+                        "Good point, {learner name}! Repetition helps with retention.",
+                        "Excellent, {learner name}! Examples make abstract concepts concrete.",
+                        "Great observation, {learner name}! Visual aids enhance understanding.",
+                        "Perfect, {learner name}! Multiple reinforcement methods work best together."
+                    ],
+                    correctAnswer: 0
+                },
+                {
+                    question: "What does it mean to think of research as a “conversation”?",
+                    options: ["Research is best done through interviews with classmates.", "Scholars express different viewpoints and findings in their writing, contributing to a broader discussion on the topic.", 
+"Research should avoid differing perspectives to stay focused.", "You should only use sources that agree with each other."],
+                    feedback: [
+                        "Good timing, {learner name}! Introductions set up the learning journey.",
+                        "Excellent, {learner name}! Main concepts are the heart of educational content.",
+                        "Great attention, {learner name}! Details provide important depth.",
+                        "Thoughtful, {learner name}! Summaries help consolidate learning."
+                    ],
+                    correctAnswer: 0
+                },
+                {
+                    question: "What role does flexibility play in the research process?",
+                    options: ["Sticking rigidly to the first search plan until it works", "Changing search strategies and keywords when initial attempts don’t produce results", 
+"Modifying your topic frequently to address as many components of a topic as possible", Only using one type of source to keep things simple"],
+                    feedback: [
+                        "Wonderful, {learner name}! Engaging content makes learning enjoyable.",
+                        "Good assessment, {learner name}! Moderate engagement is still effective.",
+                        "Honest evaluation, {learner name}! Sometimes important content can seem dry.",
+                        "Optimistic view, {learner name}! Content often gets more engaging as it develops."
+                    ],
+                    correctAnswer: 0
+                }
+  {
+                    question: "Why is it important to include a diversity of sources in research?
+",
+                    options: ["To make the bibliography look longer", "To understand the full scope of the debate and the different arguments scholars make", "To avoid reading contradictory viewpoints", "To use only the most popular sources"],
+                    feedback: [
+                        "Wonderful, {learner name}! Engaging content makes learning enjoyable.",
+                        "Good assessment, {learner name}! Moderate engagement is still effective.",
+                        "Honest evaluation, {learner name}! Sometimes important content can seem dry.",
+                        "Optimistic view, {learner name}! Content often gets more engaging as it develops."
+                    ],
+                    correctAnswer: 0
+                }
+  {
+                    question: "When conducting research, which of the following actions help develop a strong research mindset?",
+                    options: ["Ignoring new ideas once the topic is chosen", "Exploring multiple perspectives and sources", "Accepting the first sources you find as the final answer", "Asking for help when stuck"],
+                    feedback: [
+                        "Wonderful, {learner name}! Engaging content makes learning enjoyable.",
+                        "Good assessment, {learner name}! Moderate engagement is still effective.",
+                        "Honest evaluation, {learner name}! Sometimes important content can seem dry.",
+                        "Optimistic view, {learner name}! Content often gets more engaging as it develops."
+                    ],
+                    correctAnswer: 0
+                }
+            ]
+
+  227: [ // Questions for 227 seconds into video
+
+  {
+                    type: "likert",
+                    question: "Respond to the following likert scale question (1 = Strongly Disagree; 5 = Strongly Agree) to reflect on the following: I enjoy exploring topics that I don’t know much about.
+",
+                    scale: {
+                        min: 1,
+                        max: 5,
+                        labels: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"],
+                        endpoints: ["Strongly Disagree", "Strongly Agree"]
+                    },
+                    feedback: {
+                        1: "Thank you for that feedback, {learner name}. Organization is crucial for learning.",
+                        2: "I appreciate your honesty, {learner name}. Clear organization is important.",
+                        3: "That's fair, {learner name}. Neutral feedback helps us understand different perspectives.",
+                        4: "Great to hear, {learner name}! Good organization enhances learning.",
+                        5: "Wonderful, {learner name}! Clear organization makes all the difference."
+                    }
+                },
+
+  {
+                    type: "likert",
+                    question: "Respond to the following likert scale question (1 = Strongly Disagree; 5 = Strongly Agree) to reflect on the following: When I learn something interesting, I want to dig deeper and find out more.
+",
+                    scale: {
+                        min: 1,
+                        max: 5,
+                        labels: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"],
+                        endpoints: ["Strongly Disagree", "Strongly Agree"]
+                    },
+                    feedback: {
+                        1: "Thank you for that feedback, {learner name}. Organization is crucial for learning.",
+                        2: "I appreciate your honesty, {learner name}. Clear organization is important.",
+                        3: "That's fair, {learner name}. Neutral feedback helps us understand different perspectives.",
+                        4: "Great to hear, {learner name}! Good organization enhances learning.",
+                        5: "Wonderful, {learner name}! Clear organization makes all the difference."
+                    }
+                },
+
+  {
+                    type: "likert",
+                    question: "Respond to the following likert scale question (1 = Strongly Disagree; 5 = Strongly Agree) to reflect on the following: I often wonder how or why something works or happens.
+",
+                    scale: {
+                        min: 1,
+                        max: 5,
+                        labels: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"],
+                        endpoints: ["Strongly Disagree", "Strongly Agree"]
+                    },
+                    feedback: {
+                        1: "Thank you for that feedback, {learner name}. Organization is crucial for learning.",
+                        2: "I appreciate your honesty, {learner name}. Clear organization is important.",
+                        3: "That's fair, {learner name}. Neutral feedback helps us understand different perspectives.",
+                        4: "Great to hear, {learner name}! Good organization enhances learning.",
+                        5: "Wonderful, {learner name}! Clear organization makes all the difference."
+                    }
+                },
+
+  {
+                    type: "likert",
+                    question: "Respond to the following likert scale question (1 = Strongly Disagree; 5 = Strongly Agree) to reflect on the following: I feel confident asking questions when I don’t fully understand a topic.
+",
+                    scale: {
+                        min: 1,
+                        max: 5,
+                        labels: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"],
+                        endpoints: ["Strongly Disagree", "Strongly Agree"]
+                    },
+                    feedback: {
+                        1: "Thank you for that feedback, {learner name}. Organization is crucial for learning.",
+                        2: "I appreciate your honesty, {learner name}. Clear organization is important.",
+                        3: "That's fair, {learner name}. Neutral feedback helps us understand different perspectives.",
+                        4: "Great to hear, {learner name}! Good organization enhances learning.",
+                        5: "Wonderful, {learner name}! Clear organization makes all the difference."
+                    }
+                },
+]
+
+  232: [ // Questions for 232 seconds into video
+
+  {
+                    type: "likert",
+                    question: "Respond to the following likert scale question (1 = Strongly Disagree; 5 = Strongly Agree) to reflect on the following: If I can’t find the information I need right away, I keep trying different strategies.
+
+",
+                    scale: {
+                        min: 1,
+                        max: 5,
+                        labels: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"],
+                        endpoints: ["Strongly Disagree", "Strongly Agree"]
+                    },
+                    feedback: {
+                        1: "Thank you for that feedback, {learner name}. Organization is crucial for learning.",
+                        2: "I appreciate your honesty, {learner name}. Clear organization is important.",
+                        3: "That's fair, {learner name}. Neutral feedback helps us understand different perspectives.",
+                        4: "Great to hear, {learner name}! Good organization enhances learning.",
+                        5: "Wonderful, {learner name}! Clear organization makes all the difference."
+                    }
+                },
+
+  {
+                    type: "likert",
+                    question: "Respond to the following likert scale question (1 = Strongly Disagree; 5 = Strongly Agree) to reflect on the following: I don’t give up easily when research gets difficult or frustrating.
+
+",
+                    scale: {
+                        min: 1,
+                        max: 5,
+                        labels: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"],
+                        endpoints: ["Strongly Disagree", "Strongly Agree"]
+                    },
+                    feedback: {
+                        1: "Thank you for that feedback, {learner name}. Organization is crucial for learning.",
+                        2: "I appreciate your honesty, {learner name}. Clear organization is important.",
+                        3: "That's fair, {learner name}. Neutral feedback helps us understand different perspectives.",
+                        4: "Great to hear, {learner name}! Good organization enhances learning.",
+                        5: "Wonderful, {learner name}! Clear organization makes all the difference."
+                    }
+                },
+
+  {
+                    type: "likert",
+                    question: "Respond to the following likert scale question (1 = Strongly Disagree; 5 = Strongly Agree) to reflect on the following: I know that encountering challenges during research is normal.
+
+",
+                    scale: {
+                        min: 1,
+                        max: 5,
+                        labels: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"],
+                        endpoints: ["Strongly Disagree", "Strongly Agree"]
+                    },
+                    feedback: {
+                        1: "Thank you for that feedback, {learner name}. Organization is crucial for learning.",
+                        2: "I appreciate your honesty, {learner name}. Clear organization is important.",
+                        3: "That's fair, {learner name}. Neutral feedback helps us understand different perspectives.",
+                        4: "Great to hear, {learner name}! Good organization enhances learning.",
+                        5: "Wonderful, {learner name}! Clear organization makes all the difference."
+                    }
+                },
+
+  {
+                    type: "likert",
+                    question: "Respond to the following likert scale question (1 = Strongly Disagree; 5 = Strongly Agree) to reflect on the following: I’ve worked through roadblocks when researching for past assignments.
+
+",
+                    scale: {
+                        min: 1,
+                        max: 5,
+                        labels: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"],
+                        endpoints: ["Strongly Disagree", "Strongly Agree"]
+                    },
+                    feedback: {
+                        1: "Thank you for that feedback, {learner name}. Organization is crucial for learning.",
+                        2: "I appreciate your honesty, {learner name}. Clear organization is important.",
+                        3: "That's fair, {learner name}. Neutral feedback helps us understand different perspectives.",
+                        4: "Great to hear, {learner name}! Good organization enhances learning.",
+                        5: "Wonderful, {learner name}! Clear organization makes all the difference."
+                    }
+                },
+]
+
+
+  246: [ // Questions for 246 seconds into video
+
+  {
+                    type: "likert",
+                    question: "Respond to the following likert scale question (1 = Strongly Disagree; 5 = Strongly Agree) to reflect on the following: I usually plan out how I will start a research assignment before jumping in.
+
+
+",
+                    scale: {
+                        min: 1,
+                        max: 5,
+                        labels: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"],
+                        endpoints: ["Strongly Disagree", "Strongly Agree"]
+                    },
+                    feedback: {
+                        1: "Thank you for that feedback, {learner name}. Organization is crucial for learning.",
+                        2: "I appreciate your honesty, {learner name}. Clear organization is important.",
+                        3: "That's fair, {learner name}. Neutral feedback helps us understand different perspectives.",
+                        4: "Great to hear, {learner name}! Good organization enhances learning.",
+                        5: "Wonderful, {learner name}! Clear organization makes all the difference."
+                    }
+                },
+
+  {
+                    type: "likert",
+                    question: "Respond to the following likert scale question (1 = Strongly Disagree; 5 = Strongly Agree) to reflect on the following: I think about keywords and search terms before using databases or search engines.
+
+
+",
+                    scale: {
+                        min: 1,
+                        max: 5,
+                        labels: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"],
+                        endpoints: ["Strongly Disagree", "Strongly Agree"]
+                    },
+                    feedback: {
+                        1: "Thank you for that feedback, {learner name}. Organization is crucial for learning.",
+                        2: "I appreciate your honesty, {learner name}. Clear organization is important.",
+                        3: "That's fair, {learner name}. Neutral feedback helps us understand different perspectives.",
+                        4: "Great to hear, {learner name}! Good organization enhances learning.",
+                        5: "Wonderful, {learner name}! Clear organization makes all the difference."
+                    }
+                },
+
+  {
+                    type: "likert",
+                    question: "Respond to the following likert scale question (1 = Strongly Disagree; 5 = Strongly Agree) to reflect on the following: I can adjust my research strategy when something isn’t working.
+
+
+",
+                    scale: {
+                        min: 1,
+                        max: 5,
+                        labels: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"],
+                        endpoints: ["Strongly Disagree", "Strongly Agree"]
+                    },
+                    feedback: {
+                        1: "Thank you for that feedback, {learner name}. Organization is crucial for learning.",
+                        2: "I appreciate your honesty, {learner name}. Clear organization is important.",
+                        3: "That's fair, {learner name}. Neutral feedback helps us understand different perspectives.",
+                        4: "Great to hear, {learner name}! Good organization enhances learning.",
+                        5: "Wonderful, {learner name}! Clear organization makes all the difference."
+                    }
+                },
+
+  {
+                    type: "likert",
+                    question: "Respond to the following likert scale question (1 = Strongly Disagree; 5 = Strongly Agree) to reflect on the following: I consider the different perspectives or debates around a topic when researching.
+
+
+",
+                    scale: {
+                        min: 1,
+                        max: 5,
+                        labels: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"],
+                        endpoints: ["Strongly Disagree", "Strongly Agree"]
+                    },
+                    feedback: {
+                        1: "Thank you for that feedback, {learner name}. Organization is crucial for learning.",
+                        2: "I appreciate your honesty, {learner name}. Clear organization is important.",
+                        3: "That's fair, {learner name}. Neutral feedback helps us understand different perspectives.",
+                        4: "Great to hear, {learner name}! Good organization enhances learning.",
+                        5: "Wonderful, {learner name}! Clear organization makes all the difference."
+                    }
+                },
+]
         };
 
         // This will be populated with randomly selected questions
@@ -632,15 +1114,131 @@
             questionEl.textContent = quiz.question;
             optionsEl.innerHTML = '';
             
-            quiz.options.forEach((option, index) => {
-                const button = document.createElement('button');
-                button.className = 'option';
-                button.textContent = option;
-                button.onclick = () => handleAnswer(index);
-                optionsEl.appendChild(button);
-            });
+            // Check if this is a Likert scale question
+            if (quiz.type === 'likert') {
+                showLikertScale(quiz, optionsEl);
+            } else {
+                // Regular multiple choice question
+                quiz.options.forEach((option, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'option';
+                    button.textContent = option;
+                    button.onclick = () => handleAnswer(index);
+                    optionsEl.appendChild(button);
+                });
+            }
             
             quizContainer.classList.add('active');
+        }
+
+        // Display Likert scale
+        function showLikertScale(quiz, container) {
+            const likertContainer = document.createElement('div');
+            likertContainer.className = 'likert-container';
+            
+            const scaleContainer = document.createElement('div');
+            scaleContainer.className = 'likert-scale';
+            
+            // Create radio buttons and labels
+            for (let i = quiz.scale.min; i <= quiz.scale.max; i++) {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'likert-option';
+                
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = 'likert-response';
+                radio.value = i;
+                radio.className = 'likert-radio';
+                radio.id = `likert-${i}`;
+                
+                const label = document.createElement('label');
+                label.htmlFor = `likert-${i}`;
+                label.className = 'likert-label';
+                label.textContent = quiz.scale.labels[i - quiz.scale.min] || i.toString();
+                
+                // Add click handler to the entire option div
+                optionDiv.onclick = () => {
+                    // Remove selection from all options
+                    document.querySelectorAll('.likert-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // Add selection to clicked option
+                    optionDiv.classList.add('selected');
+                    radio.checked = true;
+                    
+                    // Enable submit button
+                    document.getElementById('likert-submit').disabled = false;
+                };
+                
+                optionDiv.appendChild(radio);
+                optionDiv.appendChild(label);
+                scaleContainer.appendChild(optionDiv);
+            }
+            
+            likertContainer.appendChild(scaleContainer);
+            
+            // Add endpoint labels if provided
+            if (quiz.scale.endpoints && quiz.scale.endpoints.length >= 2) {
+                const endpoints = document.createElement('div');
+                endpoints.className = 'likert-endpoints';
+                endpoints.innerHTML = `<span>${quiz.scale.endpoints[0]}</span><span>${quiz.scale.endpoints[1]}</span>`;
+                likertContainer.appendChild(endpoints);
+            }
+            
+            // Add submit button
+            const submitButton = document.createElement('button');
+            submitButton.id = 'likert-submit';
+            submitButton.className = 'likert-submit';
+            submitButton.textContent = 'Submit Response';
+            submitButton.disabled = true;
+            submitButton.onclick = () => handleLikertAnswer();
+            
+            likertContainer.appendChild(submitButton);
+            container.appendChild(likertContainer);
+        }
+
+        // Handle Likert scale answer
+        function handleLikertAnswer() {
+            const selectedRadio = document.querySelector('input[name="likert-response"]:checked');
+            if (selectedRadio) {
+                const selectedValue = parseInt(selectedRadio.value);
+                
+                // For Likert scales, we consider any response as "correct" 
+                // since they're subjective opinions/ratings
+                completedQuizzes.add(currentQuiz.timeStamp);
+                currentScore += 1; // Give full points for participation
+                currentStreak += 1; // Maintain streak for engagement
+                
+                updateScoreDisplay();
+                
+                // Show feedback
+                const feedbackMsg = document.createElement('p');
+                const feedback = currentQuiz.feedback[selectedValue] || 
+                    `Thank you for your response, ${learnerName}!`;
+                feedbackMsg.textContent = replaceNameInFeedback(feedback);
+                feedbackMsg.style.color = '#008000';
+                feedbackMsg.style.marginTop = '15px';
+                feedbackMsg.style.textAlign = 'center';
+                feedbackMsg.style.fontWeight = 'bold';
+                
+                // Disable all options
+                document.querySelectorAll('.likert-option').forEach(opt => {
+                    opt.style.pointerEvents = 'none';
+                    opt.style.opacity = '0.7';
+                });
+                document.getElementById('likert-submit').style.display = 'none';
+                
+                const container = document.getElementById('options');
+                container.appendChild(feedbackMsg);
+                
+                setTimeout(() => {
+                    document.getElementById('quizContainer').classList.remove('active');
+                    currentQuiz = null;
+                    attemptsForCurrentQuestion = 0;
+                    player.playVideo();
+                }, 3000); // Longer delay for Likert to read feedback
+            }
         }
 
         // Handle answer selection
